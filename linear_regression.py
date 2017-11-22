@@ -24,11 +24,12 @@ def read_file():
 
 
 def analysis(data, columns):
+    x0 = np.ones((1, len(data)))
     x1 = np.array([data[columns[i0]]])
     x2 = np.array([data[columns[i1]]])
     t = np.array([data[columns[d]]])
     t = np.transpose(t)
-    x = np.vstack((x1,x2))
+    x = np.vstack((x0,x1,x2))
     x = np.transpose(x)
     ans = np.dot(np.transpose(x),x)
     ans = np.dot(np.linalg.inv(ans),np.transpose(x))
@@ -39,7 +40,7 @@ def func(w,X1,X2):
     y = np.eye(len(X1),len(X1[0]))
     for i in range(len(y)):
         for j in range(len(y[0])):
-            x = np.array([[X1[i][j]],[X2[i][j]]])
+            x = np.array([[1],[X1[i][j]],[X2[i][j]]])
             temp = np.dot(np.transpose(w),x)
             y[i][j] = temp[0][0]
     return y
@@ -61,13 +62,22 @@ def plot(w, x1, x2, t):
     ax.plot_wireframe(X1, X2, Y)
     plt.show()
 
-
+def covariance(x1, x2, t):
+    x1 = np.transpose(x1)
+    x2 = np.transpose(x2)
+    t = np.transpose(t)
+    x = np.hstack((x1, x2, t))
+    c = np.cov(x, rowvar=0, bias=0)
+    print c
+    return 
 
 data = read_file()
 columns = data.columns
 
 w = analysis(data, columns)
-x1 = np.array(data[columns[i0]])
-x2 = np.array(data[columns[i1]])
-t = np.array(data[columns[d]])
+x1 = np.array([data[columns[i0]]])
+x2 = np.array([data[columns[i1]]])
+t = np.array([data[columns[d]]])
+
 plot(w, x1, x2, t)
+
